@@ -182,3 +182,137 @@ Pom xml
 
 </project>
 
+------------------------------------------------
+
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>nobroker</groupId>
+    <artifactId>selenium-test</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <dependencies>
+
+        <!-- Selenium -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>4.23.0</version>
+        </dependency>
+
+        <!-- TestNG -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>7.10.2</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+</project>
+
+
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="NoBroker UI Tests">
+    <test name="Home Page Tabs">
+        <classes>
+            <class name="tests.HomePageTest"/>
+        </classes>
+    </test>
+</suite>
+
+
+package pages;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
+
+public class HomePage {
+
+    WebDriver driver;
+
+    public HomePage(WebDriver driver) {
+        this.driver = driver;
+        PageFactory.initElements(driver, this);
+    }
+
+    @FindBy(xpath = "//div[text()='Rent']")
+    WebElement rentTab;
+
+    @FindBy(xpath = "//div[text()='Buy']")
+    WebElement buyTab;
+
+    @FindBy(xpath = "//div[text()='Commercial']")
+    WebElement commercialTab;
+
+    public void clickRentTab() {
+        rentTab.click();
+    }
+
+    public void clickBuyTab() {
+        buyTab.click();
+    }
+
+    public void clickCommercialTab() {
+        commercialTab.click();
+    }
+
+    public boolean isRentTabSelected() {
+        return rentTab.getAttribute("class").contains("active");
+    }
+
+    public boolean isBuyTabSelected() {
+        return buyTab.getAttribute("class").contains("active");
+    }
+
+    public boolean isCommercialTabSelected() {
+        return commercialTab.getAttribute("class").contains("active");
+    }
+}
+
+
+package tests;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+import pages.HomePage;
+
+import java.time.Duration;
+
+public class HomePageTest {
+
+    @Test
+    public void verifyTabsSelection() {
+
+        WebDriver driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.get("https://www.nobroker.in/");
+
+        HomePage home = new HomePage(driver);
+
+        // ✅ Test Rent tab
+        home.clickRentTab();
+        Assert.assertTrue(home.isRentTabSelected(), "Rent tab is NOT selected!");
+
+        // ✅ Test Buy tab
+        home.clickBuyTab();
+        Assert.assertTrue(home.isBuyTabSelected(), "Buy tab is NOT selected!");
+
+        // ✅ Test Commercial tab
+        home.clickCommercialTab();
+        Assert.assertTrue(home.isCommercialTabSelected(), "Commercial tab is NOT selected!");
+
+        driver.quit();
+    }
+}
+
+
