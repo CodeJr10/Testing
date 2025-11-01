@@ -12,67 +12,32 @@ src
       └── resources
             └── testng.xml
 
-
-Base Test Java 
-package base;
-
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeMethod;
-
-import java.time.Duration;
-
-public class BaseTest {
-
-    protected WebDriver driver;
-    protected WebDriverWait wait;
-
-    @BeforeMethod
-    public void setUp() {
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
-
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        driver.get("https://www.nobroker.in");
-    }
-
-    @AfterMethod
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
-    }
-}
-Homepage java
+Homepage
 package pages;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HomePage {
 
     WebDriver driver;
     WebDriverWait wait;
 
-    // Rent tab
-    @FindBy(xpath = "//div[text()='Rent']")
-    WebElement rentTab;
-
-    // Active selected Rent tab
-    @FindBy(xpath = "//div[contains(@class,'nb__1PU')]//div[text()='Rent']")
-    WebElement activeRentTab;
-
     public HomePage(WebDriver driver, WebDriverWait wait) {
         this.driver = driver;
         this.wait = wait;
         PageFactory.initElements(driver, this);
     }
+
+    @FindBy(xpath = "//div[text()='Rent']")
+    WebElement rentTab;
+
+    @FindBy(xpath = "//div[contains(@class,'nb__1PU')]//div[text()='Rent']")
+    WebElement rentTabActive;
 
     public boolean isRentTabVisible() {
         wait.until(ExpectedConditions.visibilityOf(rentTab));
@@ -84,51 +49,66 @@ public class HomePage {
     }
 
     public boolean isRentTabActive() {
-        wait.until(ExpectedConditions.visibilityOf(activeRentTab));
-        return activeRentTab.isDisplayed();
+        wait.until(ExpectedConditions.visibilityOf(rentTabActive));
+        return rentTabActive.isDisplayed();
     }
 }
-Rent test tab 
+renttesttab
 package tests;
 
-import base.BaseTest;
-import pages.HomePage;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import pages.HomePage;
 
-public class RentTabTest extends BaseTest {
+import java.time.Duration;
+
+public class RentTabTest {
 
     @Test
-    public void verifyRentTabFunctionality() {
+    public void verifyRentTab() {
 
+        // 1. Setup driver directly in test
+        WebDriverManager.chromedriver().setup();
+        WebDriver driver = new ChromeDriver();
+        driver.manage().window().maximize();
+
+        // 2. Open website
+        driver.get("https://www.nobroker.in");
+
+        // 3. Wait object
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+        // 4. Page Object
         HomePage homePage = new HomePage(driver, wait);
 
-        // 1. Validate Rent tab is visible
-        Assert.assertTrue(homePage.isRentTabVisible(),
-                "Rent tab should be visible on homepage");
-
-        // 2. Click Rent tab
+        // 5. Assertions
+        Assert.assertTrue(homePage.isRentTabVisible(), "Rent tab is NOT visible!");
         homePage.clickRentTab();
+        Assert.assertTrue(homePage.isRentTabActive(), "Rent tab is NOT active after click!");
 
-        // 3. Validate Rent tab is activated
-        Assert.assertTrue(homePage.isRentTabActive(),
-                "Rent tab should be active after clicking");
+        // 6. Close browser
+        driver.quit();
     }
 }
-testng xml 
-<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+tesngxml
+
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
 <suite name="NoBroker Test Suite">
+
     <test name="Rent Tab Test">
         <classes>
-            <class name="tests.RentTabTest"/>
+            <class name="tests.RentTabTest" />
         </classes>
     </test>
+
 </suite>
 
 
-Maven dependencies
-
-<dependencies>
+pom <dependencies>
 
     <!-- Selenium -->
     <dependency>
@@ -145,7 +125,7 @@ Maven dependencies
         <scope>test</scope>
     </dependency>
 
-    <!-- WebDriver Manager (Optional but recommended) -->
+    <!-- WebDriverManager -->
     <dependency>
         <groupId>io.github.bonigarcia</groupId>
         <artifactId>webdrivermanager</artifactId>
@@ -153,6 +133,12 @@ Maven dependencies
     </dependency>
 
 </dependencies>
+
+
+
+
+
+
 
 
 Pom xml 
