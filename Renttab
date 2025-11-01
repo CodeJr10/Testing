@@ -1,0 +1,47 @@
+package tests;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.By;
+
+import java.time.Duration;
+
+public class RentTabTest {
+
+    public void runTest() {
+
+        WebDriver driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+
+        driver.get("https://www.nobroker.in/");
+
+        // ✅ Click Rent tab
+        driver.findElement(By.xpath("//div[text()='Rent']")).click();
+
+        // ✅ Validate Rent tab is active
+        boolean isActive = driver.findElement(By.xpath("//div[text()='Rent']"))
+                                 .getAttribute("class")
+                                 .contains("active");
+
+        if (isActive) {
+            System.out.println("✅ Rent tab is selected successfully.");
+        } else {
+            System.out.println("❌ Rent tab FAILED to select.");
+        }
+
+        driver.quit();
+    }
+}
+import tests.RentTabTest;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        RentTabTest test = new RentTabTest();
+        test.runTest();
+
+        System.out.println("✅ Test execution completed!");
+    }
+}
