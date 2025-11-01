@@ -47,27 +47,32 @@ public class Main {
 }
 
 
+package base;
 
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+public class Base {
 
-    <groupId>nobroker</groupId>
-    <artifactId>selenium-basic</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    public static WebDriver createDriver() {
 
-    <dependencies>
+        ChromeOptions options = new ChromeOptions();
 
-        <!-- ✅ Selenium (Main dependency you need) -->
-        <dependency>
-            <groupId>org.seleniumhq.selenium</groupId>
-            <artifactId>selenium-java</artifactId>
-            <version>4.23.0</version>
-        </dependency>
+        // ✅ Disable browser-level notifications
+        options.addArguments("--disable-notifications");
 
-    </dependencies>
+        // ✅ Disable popups / prompts
+        options.addArguments("--disable-popup-blocking");
+        options.addArguments("--disable-infobars");
+        options.addArguments("--start-maximized");
 
-</project>
+        // ✅ Disable Geolocation prompts (NoBroker asks for location)
+        options.addArguments("--disable-geolocation");
+
+        WebDriver driver = new ChromeDriver(options);
+        return driver;
+    }
+}
+
 
