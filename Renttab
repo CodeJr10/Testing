@@ -75,4 +75,39 @@ public class Base {
     }
 }
 
+Base case
+
+public class BaseTest {
+
+    public static WebDriver driver;
+
+    @BeforeClass
+    public void setUp() {
+
+        ChromeOptions options = new ChromeOptions();
+
+        Map<String, Object> prefs = new HashMap<>();
+
+        // ✅ Disable notifications completely
+        prefs.put("profile.default_content_setting_values.notifications", 2);
+
+        // ✅ Disable location, camera, mic (optional but useful)
+        prefs.put("profile.default_content_setting_values.geolocation", 2);
+        prefs.put("profile.default_content_setting_values.media_stream", 2);
+
+        options.setExperimentalOption("prefs", prefs);
+
+        // ✅ Extra safety
+        options.addArguments("--disable-notifications");
+        options.addArguments("--disable-popup-blocking");
+
+        driver = new ChromeDriver(options);
+        driver.manage().window().maximize();
+    }
+
+    @AfterClass
+    public void tearDown() {
+        driver.quit();
+    }
+}
 
