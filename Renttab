@@ -77,27 +77,32 @@ public class Base {
 
 Base case
 
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import java.util.HashMap;
+import java.util.Map;
+
 public class BaseTest {
 
     public static WebDriver driver;
 
-    @BeforeClass
-    public void setUp() {
+    public static void setup() {
 
         ChromeOptions options = new ChromeOptions();
 
         Map<String, Object> prefs = new HashMap<>();
 
-        // ✅ Disable notifications completely
+        // ✅ Block notifications permanently
         prefs.put("profile.default_content_setting_values.notifications", 2);
 
-        // ✅ Disable location, camera, mic (optional but useful)
+        // ✅ Extra recommended blocks (optional)
         prefs.put("profile.default_content_setting_values.geolocation", 2);
         prefs.put("profile.default_content_setting_values.media_stream", 2);
 
         options.setExperimentalOption("prefs", prefs);
 
-        // ✅ Extra safety
+        // ✅ Additional hard-block
         options.addArguments("--disable-notifications");
         options.addArguments("--disable-popup-blocking");
 
@@ -105,9 +110,10 @@ public class BaseTest {
         driver.manage().window().maximize();
     }
 
-    @AfterClass
-    public void tearDown() {
-        driver.quit();
+    public static void teardown() {
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }
 
