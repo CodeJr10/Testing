@@ -1,119 +1,56 @@
+RunTest file 
+
+```
 package tests;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.By;
-
-import java.time.Duration;
-
-public class RentTabTest {
-
-    public void runTest() {
-
-        WebDriver driver = new ChromeDriver();
-        driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
-
-        driver.get("https://www.nobroker.in/");
-
-        // ✅ Click Rent tab
-        driver.findElement(By.xpath("//div[text()='Rent']")).click();
-
-        // ✅ Validate Rent tab is active
-        boolean isActive = driver.findElement(By.xpath("//div[text()='Rent']"))
-                                 .getAttribute("class")
-                                 .contains("active");
-
-        if (isActive) {
-            System.out.println("✅ Rent tab is selected successfully.");
-        } else {
-            System.out.println("❌ Rent tab FAILED to select.");
-        }
-
-        driver.quit();
-    }
-}
-import tests.RentTabTest;
-
-public class Main {
-
-    public static void main(String[] args) {
-
-        RentTabTest test = new RentTabTest();
-        test.runTest();
-
-        System.out.println("✅ Test execution completed!");
-    }
-}
-
-
-package base;
-
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.testng.annotations.Test;
 
-public class Base {
+import io.github.bonigarcia.wdm.WebDriverManager;
 
-    public static WebDriver createDriver() {
 
-        ChromeOptions options = new ChromeOptions();
+public class runTest1 extends BaseSteps {
+	
+	WebDriver driver;
+	RentTabTest rent;
+	
+	@Test
+	public void verifyTests() throws InterruptedException {
+		
+		// block notifs
+		ChromeOptions options = new ChromeOptions();
+		options.addArguments("--disable-notifications");
+		WebDriverManager.chromedriver().setup();		
+		BaseSteps.setup();
+		driver = new ChromeDriver(options);
+		
+		
+		
+		driver.manage().window().maximize();
+		driver.get("https://www.nobroker.in/");
+		
+		rent = new RentTabTest(driver);
+		
+		
+//		rent.selectRoom();
+//		Thread.sleep(5000);
+//		rent.selectRoomOption();
+//		Thread.sleep(5000);
+		rent.clickLocation();
+		Thread.sleep(5000);
+		rent.locationOptionClick();
+		rent.clickRent();
+		
+		Thread.sleep(5000);
+//		Thread.sleep(5000);
 
-        // ✅ Disable browser-level notifications
-        options.addArguments("--disable-notifications");
-
-        // ✅ Disable popups / prompts
-        options.addArguments("--disable-popup-blocking");
-        options.addArguments("--disable-infobars");
-        options.addArguments("--start-maximized");
-
-        // ✅ Disable Geolocation prompts (NoBroker asks for location)
-        options.addArguments("--disable-geolocation");
-
-        WebDriver driver = new ChromeDriver(options);
-        return driver;
-    }
+		rent.enterData("Vikhroli"); 
+		Thread.sleep(5000);
+		
+		rent.clickOption();
+		rent.clickSearch();
+	}
 }
-
-Base case
-
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import java.util.HashMap;
-import java.util.Map;
-
-public class BaseTest {
-
-    public static WebDriver driver;
-
-    public static void setup() {
-
-        ChromeOptions options = new ChromeOptions();
-
-        Map<String, Object> prefs = new HashMap<>();
-
-        // ✅ Block notifications permanently
-        prefs.put("profile.default_content_setting_values.notifications", 2);
-
-        // ✅ Extra recommended blocks (optional)
-        prefs.put("profile.default_content_setting_values.geolocation", 2);
-        prefs.put("profile.default_content_setting_values.media_stream", 2);
-
-        options.setExperimentalOption("prefs", prefs);
-
-        // ✅ Additional hard-block
-        options.addArguments("--disable-notifications");
-        options.addArguments("--disable-popup-blocking");
-
-        driver = new ChromeDriver(options);
-        driver.manage().window().maximize();
-    }
-
-    public static void teardown() {
-        if (driver != null) {
-            driver.quit();
-        }
-    }
-}
-
+```
