@@ -1,5 +1,12 @@
 # Testing
 
+To verify that the Sales Order for BD material correctly pulls the Product Hierarchy and applies the Handling Charge (ZHDL).
+ 
+To verify that the Product Hierarchy is visible for APM material but the Handling Charge (ZHDL) is zero.
+ 
+To verify that the Sales Order for BD material correctly pulls the Product Hierarchy and applies the Handling Charge (ZHDL).
+ 
+
 src
  └── test
       ├── java
